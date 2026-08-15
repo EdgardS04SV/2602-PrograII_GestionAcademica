@@ -4,18 +4,13 @@ class Usuario {
     -int idUsuario
     -String nombreUsuario
     -String contrasena
-    -boolean estado
-    +iniciarSesion(String contrasena) boolean
-    +activar()
-    +desactivar()
-    +cambiarContrasena(String nuevaContrasena)
+    -EstadoUsuario estado
 }
 
 class Rol {
     -int idRol
     -String nombreRol
     -String descripcion
-    +tienePermiso(String permiso) boolean
 }
 
 class PeriodoAcademico {
@@ -24,9 +19,7 @@ class PeriodoAcademico {
     -LocalDate fechaInicio
     -LocalDate fechaFin
     -EstadoPeriodo estado
-    +activar()
-    +finalizar()
-    +validarFechas() boolean
+    +fechasValidas() boolean
     +estaVigente() boolean
 }
 
@@ -36,19 +29,11 @@ class Curso {
     -String nombreCurso
     -String descripcion
     -EstadoCurso estado
-    +asignarInstructor(Usuario instructor)
-    +matricularEstudiante(Usuario estudiante)
-    +agregarMaterial(MaterialDidactico material)
-    +agregarActividad(ActividadEvaluativa actividad)
-    +calcularPromedio() double
 }
 
 class Matricula {
     -int idMatricula
     -LocalDate fechaMatricula
-    +registrar()
-    +cancelar()
-    +estaActiva() boolean
 }
 
 class Pago {
@@ -57,10 +42,9 @@ class Pago {
     -LocalDate fechaPago
     -String rutaComprobante
     -EstadoPago estadoPago
-    +registrar()
-    +aprobar(Usuario asesor)
-    +rechazar(Usuario asesor)
-    +estaValidado() boolean
+    +estaPendiente() boolean
+    +estaAprobado() boolean
+    +estaRechazado() boolean
 }
 
 class Factura {
@@ -68,8 +52,6 @@ class Factura {
     -String numeroFactura
     -LocalDate fechaEmision
     -double montoTotal
-    +generar()
-    +obtenerDetalle()
 }
 
 class MaterialDidactico {
@@ -77,8 +59,6 @@ class MaterialDidactico {
     -String tituloMaterial
     -String rutaArchivo
     -LocalDate fechaSubida
-    +publicar()
-    +descargar()
 }
 
 class ActividadEvaluativa {
@@ -87,9 +67,7 @@ class ActividadEvaluativa {
     -String descripcion
     -LocalDate fechaLimite
     -double ponderacion
-    +publicar()
     +estaVencida() boolean
-    +recibirEntrega(EntregaEvaluacion entrega)
 }
 
 class EntregaEvaluacion {
@@ -98,9 +76,13 @@ class EntregaEvaluacion {
     -LocalDate fechaEntrega
     -double calificacion
     -String observaciones
-    +entregar()
-    +calificar(double nota, String observaciones)
     +estaCalificada() boolean
+}
+
+class EstadoUsuario {
+    <<enumeration>>
+    ACTIVO
+    INACTIVO
 }
 
 class EstadoPeriodo {
@@ -123,6 +105,7 @@ class EstadoPago {
     RECHAZADO
 }
 
+
 Rol "1" <-- "0..*" Usuario : tiene
 
 PeriodoAcademico "1" <-- "0..*" Curso : contiene
@@ -139,11 +122,14 @@ Pago "1" <-- "0..1" Factura : genera
 Usuario "1" <-- "0..*" Factura : pertenece
 
 Curso "1" *-- "0..*" MaterialDidactico : contiene
+
 Curso "1" *-- "0..*" ActividadEvaluativa : contiene
 
 ActividadEvaluativa "1" *-- "0..*" EntregaEvaluacion : recibe
 Usuario "1" <-- "0..*" EntregaEvaluacion : estudiante
 
+
+Usuario --> EstadoUsuario
 PeriodoAcademico --> EstadoPeriodo
 Curso --> EstadoCurso
 Pago --> EstadoPago
