@@ -1,0 +1,149 @@
+classDiagram
+
+class Usuario {
+    -int idUsuario
+    -String nombreUsuario
+    -String contrasena
+    -boolean estado
+    +iniciarSesion(String contrasena) boolean
+    +activar()
+    +desactivar()
+    +cambiarContrasena(String nuevaContrasena)
+}
+
+class Rol {
+    -int idRol
+    -String nombreRol
+    -String descripcion
+    +tienePermiso(String permiso) boolean
+}
+
+class PeriodoAcademico {
+    -int idPeriodo
+    -String nombrePeriodo
+    -LocalDate fechaInicio
+    -LocalDate fechaFin
+    -EstadoPeriodo estado
+    +activar()
+    +finalizar()
+    +validarFechas() boolean
+    +estaVigente() boolean
+}
+
+class Curso {
+    -int idCurso
+    -String codigoCurso
+    -String nombreCurso
+    -String descripcion
+    -EstadoCurso estado
+    +asignarInstructor(Usuario instructor)
+    +matricularEstudiante(Usuario estudiante)
+    +agregarMaterial(MaterialDidactico material)
+    +agregarActividad(ActividadEvaluativa actividad)
+    +calcularPromedio() double
+}
+
+class Matricula {
+    -int idMatricula
+    -LocalDate fechaMatricula
+    +registrar()
+    +cancelar()
+    +estaActiva() boolean
+}
+
+class Pago {
+    -int idPago
+    -double monto
+    -LocalDate fechaPago
+    -String rutaComprobante
+    -EstadoPago estadoPago
+    +registrar()
+    +aprobar(Usuario asesor)
+    +rechazar(Usuario asesor)
+    +estaValidado() boolean
+}
+
+class Factura {
+    -int idFactura
+    -String numeroFactura
+    -LocalDate fechaEmision
+    -double montoTotal
+    +generar()
+    +obtenerDetalle()
+}
+
+class MaterialDidactico {
+    -int idMaterial
+    -String tituloMaterial
+    -String rutaArchivo
+    -LocalDate fechaSubida
+    +publicar()
+    +descargar()
+}
+
+class ActividadEvaluativa {
+    -int idActividad
+    -String nombreActividad
+    -String descripcion
+    -LocalDate fechaLimite
+    -double ponderacion
+    +publicar()
+    +estaVencida() boolean
+    +recibirEntrega(EntregaEvaluacion entrega)
+}
+
+class EntregaEvaluacion {
+    -int idEntrega
+    -String rutaArchivoEntrega
+    -LocalDate fechaEntrega
+    -double calificacion
+    -String observaciones
+    +entregar()
+    +calificar(double nota, String observaciones)
+    +estaCalificada() boolean
+}
+
+class EstadoPeriodo {
+    <<enumeration>>
+    PLANIFICADO
+    ACTIVO
+    FINALIZADO
+}
+
+class EstadoCurso {
+    <<enumeration>>
+    INACTIVO
+    ACTIVO
+}
+
+class EstadoPago {
+    <<enumeration>>
+    PENDIENTE
+    APROBADO
+    RECHAZADO
+}
+
+Rol "1" <-- "0..*" Usuario : tiene
+
+PeriodoAcademico "1" <-- "0..*" Curso : contiene
+
+Usuario "0..1" <-- "0..*" Curso : instructor
+
+Usuario "1" <-- "0..*" Matricula : estudiante
+Curso "1" <-- "0..*" Matricula : curso
+
+Usuario "1" <-- "0..*" Pago : realiza
+Usuario "0..1" <-- "0..*" Pago : valida
+
+Pago "1" <-- "0..1" Factura : genera
+Usuario "1" <-- "0..*" Factura : pertenece
+
+Curso "1" *-- "0..*" MaterialDidactico : contiene
+Curso "1" *-- "0..*" ActividadEvaluativa : contiene
+
+ActividadEvaluativa "1" *-- "0..*" EntregaEvaluacion : recibe
+Usuario "1" <-- "0..*" EntregaEvaluacion : estudiante
+
+PeriodoAcademico --> EstadoPeriodo
+Curso --> EstadoCurso
+Pago --> EstadoPago
