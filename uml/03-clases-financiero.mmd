@@ -1,13 +1,16 @@
 classDiagram
 
 class Usuario {
-    -int idUsuario
+    -String idUsuario
     -String nombreUsuario
+    -String apellidoUsuario
     -boolean estado
-    +esEstudiante() boolean
-    +esAsesorComercial() boolean
-    +esAsistenteAdministrativo() boolean
-    +esCoordinadorComercial() boolean
+}
+
+class Rol {
+    -int idRol
+    -String nombreRol
+    -String descripcion
 }
 
 class Pago {
@@ -16,9 +19,6 @@ class Pago {
     -LocalDate fechaPago
     -String rutaComprobante
     -EstadoPago estadoPago
-    +registrar()
-    +aprobar(Usuario asesor)
-    +rechazar(Usuario asesor)
     +estaPendiente() boolean
     +estaValidado() boolean
 }
@@ -53,6 +53,8 @@ class IndicadorMora {
     +filtrarPorPeriodo(int idPeriodo)
     +filtrarPorFormacion(String formacion)
 }
+
+Rol "1" <-- "0..*" Usuario : tiene
 
 Usuario "1" <-- "0..*" Pago : estudiante
 

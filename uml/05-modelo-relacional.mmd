@@ -1,104 +1,108 @@
 erDiagram
 
     ROL {
-        INT ID_ROL PK
-        VARCHAR NOMBRE_ROL
-        VARCHAR DESCRIPCION
+        INT id_rol PK
+        VARCHAR nombre_rol UK
+        VARCHAR descripcion
     }
 
     USUARIO {
-        INT ID_USUARIO PK
-        VARCHAR NOMBRE_USUARIO UK
-        VARCHAR CONTRASENA
-        BOOLEAN ESTADO
-        INT ID_ROL FK
+        VARCHAR id_usuario PK
+        VARCHAR nombre_usuario UK
+        VARCHAR apellido_usuario
+        VARCHAR contrasena
+        VARCHAR estado
+        INT id_rol FK
     }
 
     PERIODO_ACADEMICO {
-        INT ID_PERIODO PK
-        VARCHAR NOMBRE_PERIODO UK
-        DATE FECHA_INICIO
-        DATE FECHA_FIN
-        VARCHAR ESTADO
+        INT id_periodo PK
+        VARCHAR nombre_periodo UK
+        DATE fecha_inicio
+        DATE fecha_fin
+        VARCHAR estado
     }
 
     CURSO {
-        INT ID_CURSO PK
-        VARCHAR CODIGO_CURSO UK
-        VARCHAR NOMBRE_CURSO
-        VARCHAR DESCRIPCION
-        INT ID_PERIODO FK
-        INT ID_INSTRUCTOR FK
-        VARCHAR ESTADO
+        INT id_curso PK
+        VARCHAR codigo_curso UK
+        VARCHAR nombre_curso
+        VARCHAR descripcion
+        VARCHAR estado
+        INT id_periodo FK
+        VARCHAR id_instructor FK
     }
 
     MATRICULA {
-        INT ID_MATRICULA PK
-        INT ID_ESTUDIANTE FK
-        INT ID_CURSO FK
-        DATE FECHA_MATRICULA
-    }
-
-    PAGO {
-        INT ID_PAGO PK
-        INT ID_ESTUDIANTE FK
-        DECIMAL MONTO
-        DATE FECHA_PAGO
-        VARCHAR RUTA_COMPROBANTE
-        VARCHAR ESTADO_PAGO
-        INT ID_ASESOR_VALIDADOR FK
-    }
-
-    FACTURA {
-        INT ID_FACTURA PK
-        VARCHAR NUMERO_FACTURA UK
-        INT ID_PAGO FK
-        INT ID_ESTUDIANTE FK
-        DATE FECHA_EMISION
-        DECIMAL MONTO_TOTAL
+        INT id_matricula PK
+        DATE fecha_matricula
+        VARCHAR id_estudiante FK
+        INT id_curso FK
     }
 
     MATERIAL_DIDACTICO {
-        INT ID_MATERIAL PK
-        INT ID_CURSO FK
-        VARCHAR TITULO_MATERIAL
-        VARCHAR RUTA_ARCHIVO
-        DATE FECHA_SUBIDA
+        INT id_material PK
+        VARCHAR titulo_material
+        VARCHAR ruta_archivo
+        DATE fecha_subida
+        INT id_curso FK
     }
 
     ACTIVIDAD_EVALUATIVA {
-        INT ID_ACTIVIDAD PK
-        INT ID_CURSO FK
-        VARCHAR NOMBRE_ACTIVIDAD
-        VARCHAR DESCRIPCION
-        DATE FECHA_LIMITE
-        DECIMAL PONDERACION
+        INT id_actividad PK
+        VARCHAR nombre_actividad
+        VARCHAR descripcion
+        DATE fecha_limite
+        DECIMAL ponderacion
+        INT id_curso FK
     }
 
     ENTREGA_EVALUACION {
-        INT ID_ENTREGA PK
-        INT ID_ACTIVIDAD FK
-        INT ID_ESTUDIANTE FK
-        VARCHAR RUTA_ARCHIVO_ENTREGA
-        DATE FECHA_ENTREGA
-        DECIMAL CALIFICACION
-        VARCHAR OBSERVACIONES
+        INT id_entrega PK
+        VARCHAR ruta_archivo_entrega
+        DATE fecha_entrega
+        DECIMAL calificacion
+        VARCHAR observaciones
+        INT id_actividad FK
+        VARCHAR id_estudiante FK
     }
+
+    PAGO {
+        INT id_pago PK
+        DECIMAL monto
+        DATE fecha_pago
+        VARCHAR ruta_comprobante
+        VARCHAR estado_pago
+        VARCHAR id_estudiante FK
+        VARCHAR id_asesor_validador FK
+    }
+
+    FACTURA {
+        INT id_factura PK
+        VARCHAR numero_factura UK
+        DATE fecha_emision
+        DECIMAL monto_total
+        INT id_pago FK
+        VARCHAR id_estudiante FK
+    }
+
+    SESION {
+        INT id_sesion PK
+        DATETIME fecha_inicio
+        DATETIME fecha_fin
+        BOOLEAN activa
+        VARCHAR id_usuario FK
+    }
+
 
     ROL ||--o{ USUARIO : asigna
 
     PERIODO_ACADEMICO ||--o{ CURSO : contiene
 
-    USUARIO ||--o{ CURSO : imparte
+    USUARIO o|--o{ CURSO : imparte
 
     USUARIO ||--o{ MATRICULA : realiza
     CURSO ||--o{ MATRICULA : recibe
-
-    USUARIO ||--o{ PAGO : realiza
-    USUARIO o|--o{ PAGO : valida
-
-    PAGO ||--o| FACTURA : genera
-    USUARIO ||--o{ FACTURA : pertenece
 
     CURSO ||--o{ MATERIAL_DIDACTICO : contiene
 
@@ -106,3 +110,11 @@ erDiagram
 
     ACTIVIDAD_EVALUATIVA ||--o{ ENTREGA_EVALUACION : recibe
     USUARIO ||--o{ ENTREGA_EVALUACION : realiza
+
+    USUARIO ||--o{ PAGO : realiza
+    USUARIO o|--o{ PAGO : valida
+
+    PAGO ||--o| FACTURA : genera
+    USUARIO ||--o{ FACTURA : pertenece
+
+    USUARIO ||--o{ SESION : inicia

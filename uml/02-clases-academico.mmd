@@ -1,11 +1,16 @@
 classDiagram
 
 class Usuario {
-    -int idUsuario
+    -String idUsuario
     -String nombreUsuario
-    -boolean estado
-    +esEstudiante() boolean
-    +esInstructor() boolean
+    -String apellidoUsuario
+    -EstadoUsuario estado
+}
+
+class Rol {
+    -int idRol
+    -String nombreRol
+    -String descripcion
 }
 
 class PeriodoAcademico {
@@ -14,9 +19,7 @@ class PeriodoAcademico {
     -LocalDate fechaInicio
     -LocalDate fechaFin
     -EstadoPeriodo estado
-    +activar()
-    +finalizar()
-    +validarFechas() boolean
+    +fechasValidas() boolean
     +estaVigente() boolean
 }
 
@@ -26,20 +29,11 @@ class Curso {
     -String nombreCurso
     -String descripcion
     -EstadoCurso estado
-    +asignarInstructor(Usuario instructor)
-    +matricularEstudiante(Usuario estudiante)
-    +agregarMaterial(MaterialDidactico material)
-    +agregarActividad(ActividadEvaluativa actividad)
-    +obtenerEstudiantes()
-    +calcularPromedio() double
 }
 
 class Matricula {
     -int idMatricula
     -LocalDate fechaMatricula
-    +registrar()
-    +cancelar()
-    +estaActiva() boolean
 }
 
 class MaterialDidactico {
@@ -47,8 +41,6 @@ class MaterialDidactico {
     -String tituloMaterial
     -String rutaArchivo
     -LocalDate fechaSubida
-    +publicar()
-    +descargar()
 }
 
 class ActividadEvaluativa {
@@ -57,9 +49,7 @@ class ActividadEvaluativa {
     -String descripcion
     -LocalDate fechaLimite
     -double ponderacion
-    +publicar()
     +estaVencida() boolean
-    +recibirEntrega(EntregaEvaluacion entrega)
 }
 
 class EntregaEvaluacion {
@@ -68,9 +58,13 @@ class EntregaEvaluacion {
     -LocalDate fechaEntrega
     -double calificacion
     -String observaciones
-    +entregar()
-    +calificar(double nota, String observaciones)
     +estaCalificada() boolean
+}
+
+class EstadoUsuario {
+    <<enumeration>>
+    ACTIVO
+    INACTIVO
 }
 
 class EstadoPeriodo {
@@ -85,6 +79,9 @@ class EstadoCurso {
     INACTIVO
     ACTIVO
 }
+
+
+Rol "1" <-- "0..*" Usuario : tiene
 
 PeriodoAcademico "1" <-- "0..*" Curso : contiene
 
@@ -101,5 +98,7 @@ ActividadEvaluativa "1" *-- "0..*" EntregaEvaluacion : recibe
 
 Usuario "1" <-- "0..*" EntregaEvaluacion : realiza
 
+
+Usuario --> EstadoUsuario
 PeriodoAcademico --> EstadoPeriodo
 Curso --> EstadoCurso
